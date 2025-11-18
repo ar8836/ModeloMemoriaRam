@@ -27,11 +27,24 @@ namespace ModeloMemoriaRam.Vista
         private void btnLeer_Click(object sender, EventArgs e)
         {
             string direccion = txtDireccion.Text;
+
+            if (string.IsNullOrWhiteSpace(direccion))
+            {
+                MessageBox.Show("Ingresa una dirección de memoria.");
+                return;
+            }
+
             string valor = controlador.ObtenerValor(direccion);
-            if (valor != null)
-                MessageBox.Show($"Valor en {direccion}: {valor}");
-            else
-                MessageBox.Show("Dirección inválida.");
+            if (valor == null)
+            {
+                MessageBox.Show("Dirección inválida o no encontrada.");
+                return;
+            }
+
+            // Muestra el valor y actualiza la UI si hace falta
+            txtResultado.Text = valor;
+            SeleccionarFilaPorDireccion(direccion);
+            MessageBox.Show($"Valor leído: {valor}");
         }
 
         private void btnEscribir_Click(object sender, EventArgs e)
@@ -46,6 +59,19 @@ namespace ModeloMemoriaRam.Vista
             else
             {
                 MessageBox.Show("Dirección inválida.");
+            }
+        }
+
+        private void SeleccionarFilaPorDireccion(string direccion)
+        {
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells[0].Value?.ToString() == direccion)
+                {
+                    row.Selected = true;
+                    dataGridView1.FirstDisplayedScrollingRowIndex = row.Index;
+                    break;
+                }
             }
         }
     }
